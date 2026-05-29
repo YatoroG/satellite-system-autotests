@@ -10,4 +10,10 @@ public class ResponseSpecification {
                 .expectContentType(ContentType.JSON)
                 .build();
     }
+
+    public static io.restassured.specification.ResponseSpecification expectedStatusCodeWithoutResponse(int code) {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(code)
+                .build();
+    }
 }

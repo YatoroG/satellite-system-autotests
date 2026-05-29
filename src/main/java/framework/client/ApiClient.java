@@ -71,15 +71,16 @@ public class ApiClient {
 
     public Response put(
             String endpoint,
-            Map<String, Object> body
-    ) {
+            Map<String, Object> body) {
         return given()
                 .log().all()
                 .contentType(ContentType.JSON)
                 .body(body)
+                .when()
+                .put(endpoint)
                 .then()
                 .log().all()
-                .when()
-                .patch(endpoint);
+                .extract()
+                .response();
     }
 }

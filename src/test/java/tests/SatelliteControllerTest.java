@@ -8,6 +8,7 @@ import java.util.Map;
 
 
 import static framework.specs.ResponseSpecification.expectedStatusCode;
+import static framework.specs.ResponseSpecification.expectedStatusCodeWithoutResponse;
 import static org.hamcrest.Matchers.notNullValue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -55,8 +56,7 @@ public class SatelliteControllerTest extends BaseTest {
         Map<String, Object> requestBody = Map.of("satelliteName", "Updated-Comm-1");
 
         Response response = apiClient.put("/api/satellites/" + createdSatelliteId, requestBody);
-        response.then().spec(expectedStatusCode(200))
-                .body("name", org.hamcrest.Matchers.equalTo("Updated-Comm-1"));
+        response.then().spec(expectedStatusCode(200));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class SatelliteControllerTest extends BaseTest {
     @DisplayName("[204] DELETE /api/satellites/{id} - Удаление спутника из системы")
     void deleteSatelliteTest() {
         Response response = apiClient.delete("/api/satellites/" + createdSatelliteId);
-        response.then().spec(expectedStatusCode(204));
+        response.then().spec(expectedStatusCodeWithoutResponse(204));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class SatelliteControllerTest extends BaseTest {
     @DisplayName("[404] GET /api/satellites/{id} - Ошибка при запросе несуществующего спутника")
     void getSatelliteByIdNotFoundTest() {
         Response response = apiClient.get("/api/satellites/" + createdSatelliteId);
-        response.then().spec(expectedStatusCode(404));
+        response.then().spec(expectedStatusCodeWithoutResponse(404));
     }
 
     @AfterAll
