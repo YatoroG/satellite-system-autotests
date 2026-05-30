@@ -13,32 +13,38 @@ import static framework.specs.ResponseSpecification.expectedStatusCodeWithoutRes
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EnergySystemControllerTest extends BaseTest {
-    private Integer energySystemId;
+    private Long generatedId;
 
     @Test
     @Order(1)
-    @DisplayName("[200] GET /api/energy-systems - Получение списка всех энергосистем")
-    void getAllEnergySystemsTest() {
-        Response response = apiClient.get("/api/energy-systems");
-        response.then().spec(expectedStatusCode(200)).body("$", notNullValue());
-
-        try {
-            energySystemId = response.jsonPath().getInt("[0].id");
-        } catch (Exception e) {
-            energySystemId = 1;
-        }
+    @DisplayName(" [201] POST /api/satellites - Создание спутника для генерации энергосистемы")
+    void prepareDataTest() {
+        Map<String, Object> satelliteBody = Map.of("name", "Comm-1", "type", "COMMUNICATION");
+        Response response = apiClient.post("/api/satellites", satelliteBody);
+        response.then().spec(expectedStatusCode(201));
+        generatedId = response.jsonPath().getLong("id");
     }
 
     @Test
     @Order(2)
-    @DisplayName("[200] GET /api/energy-systems/{id} - Получение энергосистемы по ID")
-    void getEnergySystemByIdTest() {
-        Response response = apiClient.get("/api/energy-systems/" + energySystemId);
-        response.then().spec(expectedStatusCode(200)).body("id", org.hamcrest.Matchers.equalTo(energySystemId));
+    @DisplayName("[200] GET /api/energy-systems - Получение списка всех энергосистем")
+    void getAllEnergySystemsTest() {
+        apiClient.get("/api/energy-systems")
+                .then().spec(expectedStatusCode(200))
+                .body("$", notNullValue());
     }
 
     @Test
     @Order(3)
+    @DisplayName("[200] GET /api/energy-systems/{id} - Получение энергосистемы по ID")
+    void getEnergySystemByIdTest() {
+        apiClient.get("/api/energy-systems/" + generatedId)
+                .then().spec(expectedStatusCode(200))
+                .body("id", org.hamcrest.Matchers.equalTo(generatedId.intValue()));
+    }
+
+    @Test
+    @Order(4)
     @DisplayName("[200] PUT /api/energy-systems/{id} - Обновление параметров энергосистемы")
     void updateEnergySystemTest() {
         Map<String, Object> requestBody = Map.of(
@@ -48,16 +54,26 @@ public class EnergySystemControllerTest extends BaseTest {
                 "minBattery", 0
         );
 
-        apiClient.put("/api/energy-systems/" + energySystemId, requestBody)
-                .then().spec(expectedStatusCode(200))
+        apiClient.put("/api/energy-systems/" + generatedId, requestBody)
+                .then()
+                .spec(expectedStatusCode(200))
                 .body("batteryLevel", org.hamcrest.Matchers.equalTo(85));
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("[404] GET /api/energy-systems/{id} - Ошибка при запросе несуществующей энергосистемы")
     void getEnergySystemNotFoundTest() {
         long nonExistentId = 999999L;
-        apiClient.get("/api/energy-systems/" + nonExistentId).then().spec(expectedStatusCodeWithoutResponse(404));
+        apiClient.get("/api/energy-systems/" + nonExistentId)
+                .then()
+                .spec(expectedStatusCodeWithoutResponse(404));
+    }
+
+    @AfterAll
+    void tearDown() {
+        if (generatedId != null) {
+            apiClient.delete("/api/satellites/" + generatedId);
+        }
     }
 }
