@@ -1,14 +1,14 @@
 package tests;
 
+import java.util.Map;
 import base.BaseTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 
-import java.util.Map;
-
 
 import static framework.specs.ResponseSpecification.expectedStatusCode;
 import static framework.specs.ResponseSpecification.expectedStatusCodeWithoutResponse;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -46,7 +46,7 @@ public class SatelliteControllerTest extends BaseTest {
     void getSatelliteByIdTest() {
         Response response = apiClient.get("/api/satellites/" + createdSatelliteId);
         response.then().spec(expectedStatusCode(200))
-                .body("id", org.hamcrest.Matchers.equalTo(createdSatelliteId.intValue()));
+                .body("id", equalTo(createdSatelliteId.intValue()));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class SatelliteControllerTest extends BaseTest {
 
         Response response = apiClient.put("/api/satellites/" + createdSatelliteId, requestBody);
         response.then().spec(expectedStatusCode(200))
-                .body("name", org.hamcrest.Matchers.equalTo(newName));
+                .body("name", equalTo(newName));
     }
 
     @Test

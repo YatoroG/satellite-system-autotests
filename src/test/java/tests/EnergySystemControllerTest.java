@@ -1,14 +1,15 @@
 package tests;
 
+import java.util.Map;
 import base.BaseTest;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 
-import java.util.Map;
 
-import static org.hamcrest.Matchers.notNullValue;
 import static framework.specs.ResponseSpecification.expectedStatusCode;
 import static framework.specs.ResponseSpecification.expectedStatusCodeWithoutResponse;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -40,7 +41,7 @@ public class EnergySystemControllerTest extends BaseTest {
     void getEnergySystemByIdTest() {
         apiClient.get("/api/energy-systems/" + generatedId)
                 .then().spec(expectedStatusCode(200))
-                .body("id", org.hamcrest.Matchers.equalTo(generatedId.intValue()));
+                .body("id", equalTo(generatedId.intValue()));
     }
 
     @Test
@@ -57,10 +58,10 @@ public class EnergySystemControllerTest extends BaseTest {
         apiClient.put("/api/energy-systems/" + generatedId, requestBody)
                 .then()
                 .spec(expectedStatusCode(200))
-                .body("batteryLevel", org.hamcrest.Matchers.equalTo(85.0f))
-                .body("lowBatteryThreshold", org.hamcrest.Matchers.equalTo(20.0f))
-                .body("maxBattery", org.hamcrest.Matchers.equalTo(100.0f))
-                .body("minBattery", org.hamcrest.Matchers.equalTo(0.0f));
+                .body("batteryLevel", equalTo(85.0f))
+                .body("lowBatteryThreshold", equalTo(20.0f))
+                .body("maxBattery", equalTo(100.0f))
+                .body("minBattery", equalTo(0.0f));
     }
 
     @Test
