@@ -57,7 +57,10 @@ public class EnergySystemControllerTest extends BaseTest {
         apiClient.put("/api/energy-systems/" + generatedId, requestBody)
                 .then()
                 .spec(expectedStatusCode(200))
-                .body("batteryLevel", org.hamcrest.Matchers.equalTo(85));
+                .body("batteryLevel", org.hamcrest.Matchers.equalTo(85.0f))
+                .body("lowBatteryThreshold", org.hamcrest.Matchers.equalTo(20.0f))
+                .body("maxBattery", org.hamcrest.Matchers.equalTo(100.0f))
+                .body("minBattery", org.hamcrest.Matchers.equalTo(0.0f));
     }
 
     @Test

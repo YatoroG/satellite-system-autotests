@@ -53,10 +53,12 @@ public class SatelliteControllerTest extends BaseTest {
     @Order(4)
     @DisplayName("[200] PUT /api/satellites/{id} - Обновление данных спутника")
     void updateSatelliteTest() {
-        Map<String, Object> requestBody = Map.of("satelliteName", "Updated-Comm-1");
+        String newName = "Updated-Comm-1";
+        Map<String, Object> requestBody = Map.of("satelliteName", newName);
 
         Response response = apiClient.put("/api/satellites/" + createdSatelliteId, requestBody);
-        response.then().spec(expectedStatusCode(200));
+        response.then().spec(expectedStatusCode(200))
+                .body("name", org.hamcrest.Matchers.equalTo(newName));
     }
 
     @Test
